@@ -1,0 +1,6 @@
+terraform/*.log
+terraform/.terraform/*
+terraform/.terraform
+terraform/.terraform.lock.hcl
+terraform/cluster_status_at_install.json
+local_env.sh

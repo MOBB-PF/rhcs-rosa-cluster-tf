@@ -1,0 +1,48 @@
+{
+    "vpc_name": "rosa-pub",
+    "vpc_cidr": "10.66.0.0/16",
+    "vpc_private_subnets": ["10.66.1.0/24"],
+    "vpc_public_subnets": ["10.66.101.0/24"],
+    "create_account_roles": true,
+    "account_role_prefix": "rosa-pub",
+    "operator_role_prefix": "rosa-pub",
+    "cluster_name": "rosa-pub",
+    "ocp_version": "4.13.10",
+    "autoscaling_enabled": true,
+    "min_replicas": 2,
+    "max_replicas": 4,
+    "machine_pools": {
+    },
+    "idp": {
+    },
+    "helm": {
+      "seed": true,
+      "helm_repo": "https://gitlab.com/api/v4/projects/37447132/packages/helm/stable",
+      "helm_chart": "cluster-seed",
+      "helm_chart_version": "1.0.6"
+    },
+    "customers": {
+        "payments": {
+            "repository": "bla"
+        },
+        "intranet": {
+            "repository": "bla"
+        }
+    },
+    "tags": {
+        "project-name_or_domain": "paymentSystems",
+        "cost-centre": "0127",
+        "business-owner": "jarrod@redhat.com",
+        "operational-owner": "victoria@redhat.com",
+        "operational-hours": "extended",
+        "created-by": "pafoster@redhat.com",
+        "backup": "FALSE",
+        "security-classification": "PCI-C4:I4:A4",
+        "additional-detail": "additional-detail",
+        "environment": "lz",
+        "application-name": "mandatepayments",
+        "configuration-item": "environment",
+        "schedule": "schedule",
+        "project-id": "27609724"
+    }
+}

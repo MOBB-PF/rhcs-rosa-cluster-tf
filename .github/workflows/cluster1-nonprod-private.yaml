@@ -1,0 +1,101 @@
+name: "cluster 1 nonprod private build"
+
+on: 
+  push: 
+    branches:
+    - development
+    paths:
+    - terraform/clusters/cluster1-nonprod-private.tfvars.json
+  pull_request:
+    branches:
+    - development
+    paths:
+    - terraform/clusters/cluster1-nonprod-private.tfvars.json
+    
+env: 
+  #TF_LOG: INFO
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_NONPROD }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_NONPROD }}
+  AWS_DEFAULT_REGION: ap-southeast-2
+  TF_VAR_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_NONPROD }}
+  TF_VAR_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_NONPROD }}
+  TF_VAR_AWS_DEFAULT_REGION: ap-southeast-2
+  TF_BACKEND_BUCKET: terraform-state-foster-ocm-nonprod
+  TF_BACKEND_DYNAMO: terraform-lock
+  WORKSPACE: nonprod-dev
+  TF_BACKEND_KEY: cluster1-nonprod
+  VARS: clusters/cluster1-nonprod-private.tfvars.json
+  TF_VAR_token: ${{ secrets.REDHAT_API_TOKEN}}
+  TF_VAR_helm_token: ${{ secrets.HELM_TOKEN }}
+jobs:
+  terraform:
+    name: "cluster build job 1 private"
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/redhat-blackbelt/helm-repository/helm-repo/build/terraform-rosa-aws-helm-cli:latest
+      credentials:
+        username: pafoster
+        password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+
+    steps:
+      - name: Checkout the repository to the runner
+        uses: actions/checkout@v2
+
+      - name: Terraform init
+        id: init
+        run: |
+          terraform init -input=false -lock=false -no-color -reconfigure \
+          -backend-config="dynamodb_table=$TF_BACKEND_DYNAMO" \
+          -backend-config="bucket=$TF_BACKEND_BUCKET" \
+          -backend-config="key=$TF_BACKEND_KEY"
+          echo "Selecting Terraform workspace $WORKSPACE"
+          terraform workspace new $WORKSPACE 2>/dev/null || true
+          terraform workspace "select" $WORKSPACE
+
+      # - name: Terraform Destroy
+      #   id: destroy
+      #   run: |
+      #     terraform destroy  -auto-approve -input=false  -var-file=$VARS
+      #     exit 0
+
+      - name: Terraform format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform validate
+        id: validate
+        run: terraform validate
+
+      - name: Terraform plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false -var-file=$VARS
+        continue-on-error: true
+    
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        id: apply
+        if: github.ref == 'refs/heads/development' && github.event_name == 'push'
+        continue-on-error: true
+        run: |
+          terraform apply -auto-approve -input=false -var-file=$VARS
+          ls -alrt 
+          pwd
+          cat *.log
+          exit 0
+
+      - name: Terraform Apply Status
+        if: steps.apply.outcome == 'failure'
+        run: |
+          ls -alrt 
+          cat *.log
+          exit 1
+
+
