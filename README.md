@@ -158,19 +158,27 @@ IDP's for the clusters on ROSA in OCM via terraform and not the yaml applied dir
 
 # Cluster seeding
 
-You can optionally seed a cluster with a helm chart by setting "seed" to true in the json payload and providing the helm variables below. By setting seed to true you will also generate and store the cluster admin credentials in an AWS secret for retrieval at a later date. Look at secrets.tf and scripts/seed_rosa_cluster.sh for further details.
+You can optionally seed a cluster with a helm chart by setting "seed.deploy.true" in your json payload to true in the json payload and providing the helm variables below. By setting seed to true you will also generate and store the cluster admin credentials in an AWS secret for retrieval at a later date. Look at secrets.tf and scripts/seed_rosa_cluster.sh for further details.
 
 You must have set up the HELM_TOKEN Github secret to seed the cluster
 
-| Variable Name | Description |
+| Variable object seed | Description |
 | --- | --- | 
-|seed|bool - set to true to create secret and deploy a helm chart.|
+|deploy| - set to "true" to create secret and deploy a helm chart to cluster.|
 |helm_repo|The repo URL for the helm repository.|
 |helm_chart|The chart name |
 |helm_chart_version|The revision of the helm chart you with to deploy.|
 
 Cluster seeding is only enabled in the public cluster example. To connect to and seed a private cluster the CI runner would need direct access to the cluster once provisioned - this example pipeline does not account for this.
 
+```
+    "seed": {
+      "deploy": "true",
+      "helm_repo": "https://mobb-pf.github.io/helm-repository/",
+      "helm_chart": "cluster-seed",
+      "helm_chart_version": "1.0.3"
+    },
+```
 ## Example seed helm chart.
 
 [example helm chart](https://github.com/MOBB-PF/helm-repository/tree/main/charts/cluster-seed)
