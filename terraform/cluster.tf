@@ -19,6 +19,7 @@ resource "rhcs_cluster_rosa_classic" "rosa_sts_cluster" {
   sts                         = local.sts_roles
   machine_cidr                = module.vpc.vpc_cidr_block
   aws_private_link            = var.aws_private_link
+  private                     = var.private
   aws_subnet_ids              = var.private == true ? module.vpc.private_subnets : concat(module.vpc.private_subnets, module.vpc.public_subnets)
   availability_zones          = var.availability_zones
   multi_az                    = var.multi_az
