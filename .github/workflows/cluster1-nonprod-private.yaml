@@ -20,7 +20,7 @@ env:
   TF_VAR_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_NONPROD }}
   TF_VAR_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_NONPROD }}
   TF_VAR_AWS_DEFAULT_REGION: ap-southeast-2
-  TF_BACKEND_BUCKET: terraform-state-foster-ocm-nonprod
+  TF_BACKEND_BUCKET: terraform-state-ocm-nonprod
   TF_BACKEND_DYNAMO: terraform-lock
   WORKSPACE: nonprod-dev
   TF_BACKEND_KEY: cluster1-nonprod
@@ -34,7 +34,7 @@ jobs:
     container:
       image: registry.gitlab.com/redhat-blackbelt/helm-repository/helm-repo/build/terraform-rosa-aws-helm-cli:latest
       credentials:
-        username: pafoster
+        username: ${{ secrets.CONTAINER_USER }}
         password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
     defaults:
       run:

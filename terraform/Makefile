@@ -20,11 +20,11 @@ TF_VAR_AWS_DEFAULT_REGION := $(shell aws configure get region)
 
 TF_LOG=INFO
 WORKSPACE=nonprod-dev
-TF_BACKEND_BUCKET=terraform-state-foster-ocm-nonprod
+TF_BACKEND_BUCKET=terraform-state-nonprod
 TF_BACKEND_DYNAMO=terraform-lock
 #TF_BACKEND_KEY=cluster1-nonprod
 #VARS=clusters/cluster1-nonprod-private.tfvars.json
-TF_BACKEND_KEY=cluster3-nonprod
+TF_BACKEND_KEY=cluster2-nonprod
 VARS=clusters/cluster2-nonprod-public.tfvars.json
 
 ######################
