@@ -14,15 +14,25 @@ Make a copy of this repo to your Github account, ensure that it is a private rep
 
 This pipeline relies on a perminant S3 state bucket being created within AWS, the AWS credentials used in the piepline must have access to both the state bucket and the target account of the ROSA cluster.
 
-An example of creating an S3 bucket for a state file can be found 
+An example of creating an S3 bucket for a state file can be found here.
 
 https://github.com/MOBB-PF/terraform-state-create-tf
 
-Once the state bucket setup is complete update the following variables in the .gitihub/workflows/cluster1-nonprod-private.yaml and .gitihub/workflows/cluster1-nonprod-public.yaml files.
+Once the state bucket setup is complete update the following variables in the .gitihub/workflows/cluster*-nonprod-*private*.yaml and .gitihub/workflows/cluster*-nonprod-*.yaml files. Or if you are running locally outside of a pipeline update within the Maekfile.
 
 | Component Name | Description |
 | --- | --- | 
 |TF_BACKEND_BUCKET| \<AWS S3 Bucket Name\> |
+
+## Terraform runtime container.
+
+In this pipeline we are using a custom container that includes terraform, helm, rosa, and the oc binary. An example of how the container is built is in the following directory.
+
+https://github.com/MOBB-PF/terraform-aws-rosa-helm-image
+
+If you wish to not only terraform the cluster but perform some day 2 operations such as described in the section "Cluster seeding", you will eather need to build this container and store it in a repository that you own or do some kind of equivilence. What ever container you are going to use even if its just a standard terraform container out of docker hub, you must update the .gitihub/workflows/cluster*-nonprod-*.yaml files on line 35 to reference your container that you have access to.
+
+If you are running the terraform via Makefile - you need to make sure these binaries are installed on your system.
 
 ## Review the official ROSA prerequisits.
 
@@ -51,6 +61,8 @@ A Red Hat account is required to retrieve the ROSA token which is required to pr
 ### AWS Access
 
 In this example pipeline we are hard coding AWS access ID and secret as github secrets for AWS access. In the real world it would be recommended to use STS integrated runners for what ever pipeline CI technology you are using and manage AWS access via STS web identity roles direct to your target AWS account.
+
+If you are running locally follow the instructions within the Makefile for how the red hat token and aws credentials\region are managed.
 
 ### Create the Github Repository Secrets and Variables
 

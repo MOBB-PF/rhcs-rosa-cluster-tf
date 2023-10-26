@@ -40,19 +40,3 @@ resource "null_resource" "seed" {
     }
   }
 }
-
-# Customer onboarding of helm chart.
-
-resource "null_resource" "customer" {
-  for_each = var.customers
-  provisioner "local-exec" {
-    command = "scripts/customers.sh >> output_customers.log 2>&1"
-    environment = {
-      secret        = "${var.cluster_name}-${var.env}-credentials"
-      wait_on       = null_resource.seed[0].id
-      helm_token    = var.helm_token
-      customer_name = try(each.value.name, null)
-      customer_repo = try(each.value.git_repository, null)
-    }
-  }
-}
