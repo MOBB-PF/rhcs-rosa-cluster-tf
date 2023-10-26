@@ -1,4 +1,9 @@
 #!/bin/bash
+date=`date`
+echo "###############################################"
+echo "######## $date #########"
+echo "###############################################"
+
 # login rosa 
 rosa login -t $token
 # Check if cluster is ready
@@ -31,6 +36,7 @@ else
 fi
 pw=`echo $login | awk '{print $7}'`
 url=`echo $login | awk '{print $3}'`
+domain=`echo $login | awk -F\. '{print $2"."$3"."$4"."$5"."$6}'|awk -F\: '{print $1}'`
 echo $login
 echo $pw
 # Update secret value
@@ -61,7 +67,7 @@ do
   echo "cluster login not ready sleeping 30"
   sleep 30
 done
-# helm deployment.
+
 sleep 120
 oc project openshift-operators
 helm repo add --username foster-rh --password $helm_token helm_repo $helm_repo 
@@ -69,10 +75,10 @@ helm repo update
 i=0
 while [ true ]
 do
-  helm install operators helm_repo/$helm_chart --version $helm_chart_version --insecure-skip-tls-verify
+  helm upgrade operators helm_repo/$helm_chart --version $helm_chart_version --insecure-skip-tls-verify --install --reuse-values --set rosaDomain=$domain
   if [ $? -eq 0 ]
     then
-      echo "Helm installed initial helm operators successfully."
+      echo "Helm successfully installed seed chart $customer_name."
       break
   fi
   ((i++))

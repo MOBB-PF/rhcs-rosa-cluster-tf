@@ -1,10 +1,17 @@
 #!/bin/bash
-# Create admin user
+date=`date`
+echo "###############################################"
+echo "######## $date #########"
+echo "###############################################"
+
+helm_repo="https://mobb-pf.github.io/helm-repository/"
+helm_chart="customer-onboarding"
+helm_chart_version="1.0.0"
 #retrieve secret value
 sleep 20
-url=`aws secretsmanager get-secret-value  --secret-id $secret --query SecretString --output text|jq -r ."url"`
-pw=`aws secretsmanager get-secret-value  --secret-id $secret --query SecretString --output text|jq -r ."password"`
-user=`aws secretsmanager get-secret-value  --secret-id $secret --query SecretString --output text|jq -r ."user"`
+url=`aws secretsmanager get-secret-value  --secret-id $secret --query SecretString --output text|jq -r ."url"|xargs`
+pw=`aws secretsmanager get-secret-value  --secret-id $secret --query SecretString --output text|jq -r ."password"|xargs`
+user=`aws secretsmanager get-secret-value  --secret-id $secret --query SecretString --output text|jq -r ."user"|xargs`
 echo "$url"
 echo "$pw"
 echo "$user"
@@ -36,13 +43,12 @@ do
 done
 oc project openshift-gitops  
 # # helm deployment.
-helm repo add --username foster-rh --password $helm_token helm_repo $customer_helm_repo 
+helm repo add --username foster-rh --password $helm_token helm_repo1 $helm_repo 
 helm repo update
 i=0
-
 while [ true ]
 do
-  helm install $customer_name helm_repo/$customer_helm_chart --version $customer_helm_chart_version --insecure-skip-tls-verify --set repo=$customer_repo --set name=$customer_name
+  helm upgrade $customer_name helm_repo1/$helm_chart --version $helm_chart_version --insecure-skip-tls-verify --install --reuse-values --set repo=$customer_repo --set name=$customer_name
   if [ $? -eq 0 ]
     then
       echo "Helm successfully install customer onboarding chart $customer_name."
@@ -57,6 +63,5 @@ do
   echo "Helm failed to install customer onboarding $customer_name sleeping 30 attemp $i"
   sleep 30
 done
-
 
 

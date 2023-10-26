@@ -64,12 +64,6 @@ variable "single_nat_gateway" {
   default     = false
 }
 
-variable "azs" {
-  type        = string
-  description = "azs on vpc module"
-  default     = "ap-southeast-2a"
-}
-
 ################################
 # OCM ACCOUNT
 ################################
@@ -86,26 +80,31 @@ variable "ocm_environment" {
 variable "token" {
   type      = string
   sensitive = true
+  default   = ""
 }
 
 variable "helm_token" {
   type      = string
   sensitive = true
+  default   = ""
 }
 
 variable "AWS_ACCESS_KEY_ID" {
   type      = string
   sensitive = true
+  default   = ""
 }
 
 variable "AWS_SECRET_ACCESS_KEY" {
   type      = string
   sensitive = true
+  default   = ""
 }
 
 variable "AWS_DEFAULT_REGION" {
   type      = string
   sensitive = true
+  default   = ""
 }
 
 variable "operator_role_prefix" {
@@ -126,13 +125,8 @@ variable "cluster_name" {
   default = "foster-ocm-rosa"
 }
 
-variable "cloud_region" {
-  type    = string
-  default = "ap-southeast-2"
-}
-
 ################################
-# OCM CLUSTER
+# RHCS CLUSTER
 ################################
 
 ## Optional
@@ -324,15 +318,6 @@ variable "idp" {
   default = {}
   type    = map(any)
 }
-variable "htpasswd_username" {
-  type    = string
-  default = "john"
-}
-
-variable "htpasswd_password" {
-  type    = string
-  default = "object00"
-}
 
 ################################
 # tags object
@@ -349,11 +334,13 @@ variable "tags" {
 variable "seed" {
   type        = map(string)
   description = "Create a secret for the admin password, generate and store secret, and deploy a helm chart to cluster."
-  default     = {}
+  default = {
+
+  }
 }
 
 ################################
-# cuctomer
+# customer
 ################################
 
 variable "customers" {
@@ -366,4 +353,26 @@ variable "customer_chart" {
   type        = map(string)
   description = "Create a secret for the admin password, generate and store secret, and deploy a helm chart to cluster."
   default     = {}
+}
+
+################################
+# custom_domain
+################################
+
+variable "custom_domains" {
+  type        = map(any)
+  description = "map of custom domains to impliment."
+  default     = {}
+}
+
+variable "route53_records" {
+  type        = map(any)
+  description = "map of custom domains to impliment."
+  default     = {}
+}
+
+variable "oidc" {
+  type        = string
+  description = "OIDC"
+  default     = "270aekr3qab4nqe0l03smel47hj8sq41"
 }

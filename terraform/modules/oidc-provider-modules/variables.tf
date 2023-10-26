@@ -30,7 +30,6 @@ variable "account_role_prefix" {
 
 variable "cloud_region" {
   type    = string
-  default = "ap-southeast-2"
 }
 
 variable "tags" {
