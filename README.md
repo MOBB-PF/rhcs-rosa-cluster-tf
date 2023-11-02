@@ -203,6 +203,8 @@ By setting the state file workspace and key in the CI variables each cluster has
 
 In each CI *.github/workflows/* yaml file. The following commented out CI step code and all resources associated with cluster will be destroyed on the creation of a pull request against the branch this cluster was created on.
 
+To destroy locally - run the make destroy command in the terraform folder once you have confirmed you have the right state variables set.
+
 ```
       # - name: Terraform Destroy
       #   id: destroy
