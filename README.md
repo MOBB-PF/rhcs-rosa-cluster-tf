@@ -197,40 +197,6 @@ Cluster seeding is only enabled in the public cluster example. To connect to and
 
 This helm chart uses helm pre and post hooks with a kubernetes job in the middle to validate that all operators have installed correctly and that any other pods etc are running before deploying any custom resources that may require operators running or crd's deployed first.
 
-# Onboarding customers to the cluster
-
-Optionally many object can be applied to the json payload under "customers" to set up application teams on the cluster using an opinionated gitops approach. By following this approach to adding customers to the cluster within the cluster creation terraform we provide DR capability and devops best practices. An example and more info on how this opinionated gitops approach works is detailed in the readme within the gitops repository [to be completed]
-
-[An example helm chart to initialise an argocd application for a customer.](https://github.com/MOBB-PF/helm-repository/tree/main/charts/customer-onboarding)
-
-Below is a configuration example of using that helm chart in the json payload of for the public cluster.
-
-```
-    "customer_chart": {
-        "helm_repo": "https://mobb-pf.github.io/helm-repository/",
-        "helm_chart": "customer-onboarding",
-        "helm_chart_version": "1.0.0"
-    },
-```
-[An example gitops repository for a customer.](https://github.com/MOBB-PF/payments-gitops)
-
-This repository will use helm forloops to deliver a payload of argocd applications to deliver helm charts based on the config in this repo to the cluster for the customer.
-
-An example single customer is configured below and also in the example public cluster of the repository. Here we pass the customers base gitiops repository and name to initalisation helm chart defined in the json payload under customer_chart.
-
-```
-    "customers": {
-        "1": {
-            "name": "payments",
-            "git_repository": "https://github.com/MOBB-PF/payments-gitops"
-        }  
-    },
-```
-
-The actual argocd payload points at several other helm charts. In our example it builds the namespace for the customer and gives them the option to deploy helm charts with out knowing argocd and also microservices, again without configuring argocd applications.
-
-[Example argocd payload helm chart](https://github.com/MOBB-PF/helm-repository/tree/main/charts/argocd-payload)
-
 # Destroying a cluster
 
 By setting the state file workspace and key in the CI variables each cluster has its own state file for all resources created in the pipeline. 
