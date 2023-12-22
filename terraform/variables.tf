@@ -200,7 +200,7 @@ variable "disable_workload_monitoring" {
 variable "ec2_metadata_http_tokens" {
   type        = string
   description = "This value determines which EC2 metadata mode to use for metadata service interaction options for EC2 instances can be optional or required. This feature is available from OpenShift version 4.11.0 and newer."
-  default     = null
+  default     = "required"
 }
 
 variable "etcd_encryption" {
